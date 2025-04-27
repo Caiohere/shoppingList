@@ -1,5 +1,6 @@
 package com.example.shoppinglistapp
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -66,8 +68,9 @@ fun ShoppingListApp(innerPadding:PaddingValues) {
             .fillMaxSize()
             .padding(16.dp)) {
 
-            //item {Text("Hello lazy comlumn", modifier = Modifier.align(Alignment.CenterHorizontally))}
-            //item {Text("Hello lazy comlumn", modifier = Modifier.align(Alignment.CenterHorizontally))}
+            items(sItems){
+                ShoppingListItem(it, onEditing = {}, onDeleting = {})
+            }
         }
     }
 
@@ -113,7 +116,6 @@ fun ShoppingListApp(innerPadding:PaddingValues) {
                                 if (itemName.isNotBlank()) {
                                     val newItem = ShoppingList(id = sItems.size + 1, name = itemName, quantity = itemQuantity.toInt())
                                     sItems = sItems + newItem
-
                                     itemName = ""
                                     itemQuantity = ""
                                     showDialog = false
@@ -131,6 +133,25 @@ fun ShoppingListApp(innerPadding:PaddingValues) {
                 }
             }
         )
+    }
+}
+
+@Composable
+fun ShoppingListItem(
+    item: ShoppingList,
+    onEditing: () -> Unit,
+    onDeleting: () -> Unit
+){
+    Row (modifier = Modifier
+        .fillMaxWidth()
+        .padding(8.dp)
+        .border(shape = RoundedCornerShape(percent = 20),
+            border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+        )
+    )
+    {
+        Text(text = item.quantity.toString())
+        Text(text = item.name)
     }
 }
 
