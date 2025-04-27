@@ -34,33 +34,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier
                         .fillMaxSize(),
                 ) {
-                    innerPadding ->
-
-                    var sItems by remember { mutableStateOf( listOf<ShoppingList>())}
-
-                    Column(modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize(),
-                        verticalArrangement = Arrangement.Top
-                    ) {
-
-                        Button(onClick = { }, modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                            Text(text = "Add item")
-                        }
-
-                        LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-
-                            item {Text("Hello lazy comlumn", modifier = Modifier.align(Alignment.CenterHorizontally))}
-                            item {Text("Hello lazy comlumn", modifier = Modifier.align(Alignment.CenterHorizontally))}
-                        }
-                    }
+                    innerPadding -> ShoppingListApp(innerPadding)
                 }
             }
         }
     }
 }
 
-data class ShoppingList (var id: Int,
-                         var name: String,
-                         var quantity: Int,
-                         var isEditing: Boolean = false)
+
