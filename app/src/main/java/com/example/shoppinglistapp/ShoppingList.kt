@@ -13,13 +13,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -37,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import java.nio.file.WatchEvent
 
 data class ShoppingList (var id: Int,
                          var name: String,
@@ -69,7 +76,8 @@ fun ShoppingListApp(innerPadding:PaddingValues) {
             .padding(16.dp)) {
 
             items(sItems){
-                ShoppingListItem(it, onEditing = {}, onDeleting = {})
+                item ->
+                ShoppingListItem(item, onEditing = {}, onDeleting = { sItems = sItems.filterNot { it.id == item.id } })
             }
         }
     }
@@ -81,11 +89,18 @@ fun ShoppingListApp(innerPadding:PaddingValues) {
             content = {
 
                 Box (modifier = Modifier
-                    .background(color = MaterialTheme.colorScheme.background, shape = RoundedCornerShape(32.dp))
-                    .border(shape = RoundedCornerShape(32.dp), width = 1.dp , color = MaterialTheme.colorScheme.background)
-                    .padding(16.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(32.dp)
+                    )
+                    .border(
+                        shape = RoundedCornerShape(32.dp),
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.background
+                    )
+                    .padding(18.dp)
                     .width(280.dp)
-                    .height(325.dp)
+                    .height(300.dp)
                 ){
                     Column (modifier = Modifier.
                         fillMaxSize(),
@@ -93,24 +108,35 @@ fun ShoppingListApp(innerPadding:PaddingValues) {
                         Text("Add Shopping Item",
                             modifier = Modifier.align(Alignment.Start),
                             style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.primary
                         )
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(24.dp))
 
                         OutlinedTextField(
                             onValueChange = { itemName = it },
                             value = itemName,
                             singleLine = true,
-                            modifier = Modifier.fillMaxWidth().padding(8.dp)
+                            label = { Text("Item")},
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
                             )
 
                         OutlinedTextField(
                             onValueChange = {itemQuantity = it},
                             value = itemQuantity,
                             singleLine = true,
-                            modifier = Modifier.fillMaxWidth().padding(8.dp))
+                            label = { Text("Quantity")},
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp))
 
-                        Row(modifier = Modifier.fillMaxWidth().padding(8.dp),
+                        Spacer(modifier = Modifier.height(32.dp))
+
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
                             horizontalArrangement = Arrangement.SpaceBetween){
                             Button(onClick = {
                                 if (itemName.isNotBlank()) {
@@ -145,13 +171,40 @@ fun ShoppingListItem(
     Row (modifier = Modifier
         .fillMaxWidth()
         .padding(8.dp)
-        .border(shape = RoundedCornerShape(percent = 20),
-            border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
-        )
+        .border(
+            shape = RoundedCornerShape(percent = 20),
+            border = BorderStroke(
+                2.dp,
+                color = MaterialTheme.colorScheme.primary
+            )
+        ),
+        verticalAlignment = Alignment.CenterVertically
     )
     {
-        Text(text = item.quantity.toString())
-        Text(text = item.name)
+        Text(text = item.name, modifier = Modifier.padding(8.dp).width(128.dp))
+
+        Spacer(Modifier.width(64.dp))
+
+        Text(text = "Qty: ${item.quantity}", modifier = Modifier.padding(8.dp))
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Column {
+            Button(onClick = {
+                onEditing()
+            }
+            ) {
+                Icon(Icons.Default.Edit, contentDescription = "Edit")
+            }
+
+            Button(onClick = {
+                onDeleting()
+            }
+            ) {
+                Icon(Icons.Default.Delete, contentDescription = "Delete")
+            }
+
+        }
     }
 }
 
